@@ -35,6 +35,7 @@ header {
     padding: 20px;
     background-color: rgba(245, 245, 245, 0.8);
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    animation: slideInRight 2s ease-in-out;
 }
 
 .logo {
@@ -57,6 +58,7 @@ nav {
     border-radius: 8px;
     margin: 20px auto;
     max-width: 800px;
+    animation: slideInLeft 2s ease-in-out;
 }
 
 .intro h1 {
@@ -72,6 +74,7 @@ nav {
     margin: 20px auto;
     max-width: 800px;
     text-align: center;
+    animation: fadeIn 2s ease-in-out;
 }
 
 .highlights h2 {
@@ -87,6 +90,7 @@ nav {
     margin: 20px auto;
     max-width: 800px;
     text-align: center;
+    animation: zoomIn 2s ease-in-out;
 }
 
 /* Chatbot Project Link Styling */
@@ -117,4 +121,58 @@ nav {
 
 .chatbot-button:hover {
     background-color: #0056b3;
+}
+/* General Section Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+section {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:active {
+    transform: scale(1.05); 
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2); 
 }
