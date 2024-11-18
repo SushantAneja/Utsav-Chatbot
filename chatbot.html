@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Query</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Page styling */
+        body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #282c34;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Keep this to maintain the layout */
+    margin: 0;
+    text-align: center;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+        
+        h1 { 
+            margin-bottom: 20px; 
+            color: #61dafb; 
+        }
+        
+        input, button { 
+            margin-bottom: 20px; 
+        }
+        
+        input { 
+            padding: 10px; 
+            border-radius: 5px; 
+            width: 300px; 
+        }
+        
+        button { 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            background-color: #61dafb; 
+            color: #282c34; 
+        }
+        
+        #results {
+    margin-top: 20px;
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    max-height: 70vh; /* Adjust for internal scrolling */
+    overflow-y: auto; /* Allow scrolling */
+    scrollbar-width: none; /* For Firefox */
+}
+
+#results::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Edge */
+}
+
+
+        /* Styling for slot-wise results */
+        .slot {
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+        /* Styling for suggestions */
+        #suggestions {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    text-align: left;
+    list-style-type: none;
+    max-height: 150px; /* Limit height for scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    display: none;
+    width: 300px;
+
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #61dafb transparent; /* Stylish colors for Firefox */
+}
+
+/* Custom scrollbar for Chrome, Edge, and Safari */
+#suggestions::-webkit-scrollbar {
+    width: 8px; /* Thin scrollbar */
+}
+
+#suggestions::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #61dafb, #ffffff); /* Gradient thumb */
+    border-radius: 10px; /* Rounded corners for the scrollbar thumb */
+}
+
+#suggestions::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #ffffff, #61dafb); /* Hover effect */
+}
+
+#suggestions::-webkit-scrollbar-track {
+    background: transparent; /* Keep the track transparent */
+    border-radius: 10px;
+}
+        
+        #suggestions li {
+            padding: 5px;
+            cursor: pointer;
+        }
+        
+        #suggestions li:hover {
+            background-color: #61dafb;
+            color: #282c34;
+        }
+        a#resetLink {
+    text-decoration: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    color: #61dafb;
+    border-radius: 5px;
+    display: inline-block;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+        }
+
+/* Hover effect */
+a#resetLink:hover {
+    color: #61dafb;
+    font-size: 18px;
+}
+    </style>
+</head>
+<body>
+
+    <!-- Title -->
+    <h1>Event Location System</h1>
+
+    <!-- Input field for event query -->
+    <input type="text" id="query" placeholder="Enter your event to get details...">
+    <!-- Suggestions dropdown -->
+    <ul id="suggestions"></ul>
+    
+    <!-- Submit button -->
+    <button id="submit">Submit</button>
+
+    <!-- Reset link -->
+    <a href="home page.html" id="resetLink">Go back to Home Page</a>
+
+    <!-- Results section -->
+    <div id="results"></div>
+
+    <script>
+        // Element references
+        const queryInput = document.getElementById('query');
+        const suggestionsDiv = document.getElementById('suggestions');
+        const resultsDiv = document.getElementById('results');
+
+        // Initialize arrays
+        let qs1 = [];
+        let gs1 = [];
+        let ds1 = [];
+        let vs1 = [];
+        let ts1 = [];
+
+        // Define questions, groups, days, venues, and timings for different sets
+        let qs_11 = ['eclectic groove', 'estampie', 'tour de force', 'takes 2 to tango', 'sangam', 'antragni', 'double Trebble', 'battle of bands', 'simply music', 'one world', 'hum'];
+        let gs_11 = [['A and B', 'A and B'], ['B', 'A', 'A', 'B', 'A', 'B', 'B'], ['A and B', 'A and B'], ['A', 'A', 'B', 'B'], ['A and B'], ['B', 'B', 'A', 'A'], ['A', 'B', 'A'], ['A and B'], ['A', 'B'], ['A', 'B', 'A'], ['A and B', 'A and B']];
+        let ds_11 = [[1, 2], [1, 1, 2, 2, 3, 3, 3], [2, 3], [2, 2, 3, 3], [1], [1, 2, 2, 3], [1, 2, 3], [1], [1, 3], [1, 2, 2], [2, 3]];
+        let vs_11 = [['Front Lawn', 'Front Lawn'], ['Front Lawn', 'Assembly Area', 'Front Lawn', 'Assembly Area', 'Front Lawn', 'Front Lawn', 'Assembly Area'], ['Front Lawn', 'Front Lawn'], ['Zenjin Amphitheatre', 'Zenjin Amphitheatre', 'Zenjin Amphitheatre', 'Zenjin Amphitheatre'], ['Front Lawn'], ['Assembly Area', 'Assembly Area', 'Assembly Area', 'Assembly Area'], ['Front Lawn', 'Front Lawn', 'Front Lawn'], ['Front Lawn'], ['Zenjin Amphitheatre', 'Front Lawn'], ['Assembly Area', 'Front Lawn', 'Assembly Area'], ['Skating Rink', 'Skating Rink']];
+        let ts_11 = [['1:50 pm', '3:20 pm'], ['12:15 pm', '1:30 pm', '12:00 pm', '4:15 pm', '11:00 am', '1:20 pm', '11:30 am'], ['3:00 pm', '4:15 pm'], ['12:30 pm', '4:00 pm', '11:00 am', '1:30 pm'], ['11:00 am'], ['2:45 pm', '11:00 am', '2:30 pm', '1:30 pm'], ['1:00 pm', '2:00 pm', '10:00 am'], ['2:30 pm'], ['2:00 pm', '12:45 pm'], ['12:30 pm', '11:00 am', '12:45 pm'], ['1:10 am', '12:00 pm']];
+
+        let qs_12 = ['talking heads', 'just be', 'utsav mandali', 'laugh out loud', 'splash', 'surrealism', 'fashion geek', 'battle of art', 'don\'t stare', 'fringe chandelier', 'jam the photo', 'poetry slam'];
+        let gs_12 = [['A and B', 'A and B', 'A and B'], ['B', 'A', 'A'], ['A and B', 'A and B'], ['B', 'A'], ['A', 'A', 'B', 'B'], ['A', 'A', 'B'], ['A and B', 'A and B', 'A and B'], ['A and B', 'A and B', 'A and B'], ['A', 'B'], ['B', 'B', 'A', 'A'], ['A', 'A', 'B'], ['A', 'B']];
+        let ds_12 = [[1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2], [2, 3], [1, 2, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 2, 3], [1, 2, 3], [1, 2]];
+        let vs_12 = [['skating rink', 'skating rink', 'skating rink'], ['skating rink', 'skating rink', 'skating rink'], ['skating rink', 'skating rink'], ['skating rink', 'skating rink'], ['front lawn', 'front lawn', 'front lawn', 'front lawn'], ['left of reception front', 'left of reception front', 'left of reception front'], ['right of reception front', 'right of reception front'], ['left of reception front', 'left of reception front', 'left of reception front'], ['right of reception front', 'right of reception front', 'right of reception front'], ['left of reception front', 'left of reception front', 'left of reception front', 'left of reception front'], ['right of reception front', 'right of reception front', 'right of reception front'], ['assembly area', 'assembly area']];
+        let ts_12 = [['1:45 pm', '12:00 noon', '12:30 pm'], ['12:30 pm', '2:35 pm', '10:00 am'], ['1:15 pm', '3:30 pm'], ['11:00 am', '11:00 am'], ['11:00 am', '11:00 am', '1:00 pm', '10:00 am'], ['11:00 am', '11:30 am', '10:00 am'], ['11:00 am', '11:00 am', '10:00 am'], ['12:45 pm', '12:00 noon', '11:30 am'], ['12:30 pm', '12:30 pm', '10:30 am'], ['12:20 pm', '10:00am', '1:00 pm', '11:30'], ['1:00 pm', '11:30 am', '12:00 noon'], ['11:00 am', '1:45 pm']];
+
+        let qs_13 = ['joy division', 'connecting the plots', 'mother board', 'shark tank', 'jumping jhapang', 'ruhaniyat', 'kavyanjali', 'aamne saamne', 'blind code', 'coding treasure hunt', 'code relay', 'g-20', 'mock trial', 'odyssey of the mind', 'science fiction comic', 'rocket boys', 'mathematical rangoli'];
+        let gs_13 = [['A', 'A', 'B', 'B'], ['A and B', 'A and B', 'A and B'], ['A', 'B', 'B', 'A'], ['A and B', 'A and B', 'A and B', 'A and B', 'A and B'], ['A', 'B'], ['A', 'A', 'B'], ['B', 'A'], ['A', 'B'], ['A', 'B'], ['A', 'A', 'B', 'B'], ['A and B'], ['A', 'B'], ['B', 'A', 'A', 'B'], ['A and B', 'A and B', 'A and B'], ['B', 'A', 'A'], ['A and B'], ['A', 'B', 'B', 'A', 'A']];
+        let ds_13 = [[1, 2, 2, 3], [1, 2, 3], [2, 2, 3, 3], [1, 2, 2, 3, 3], [1, 2], [1, 2, 2], [1, 3], [2, 2], [1, 2], [1, 1, 2, 2], [2], [1, 2], [2, 2, 3, 3], [1, 2, 3], [1, 2, 3], [1], [1, 1, 2, 2, 2]];
+        let vs_13 = [['Zenjin Amphitheatre', 'Zenjin Amphitheatre', 'Zenjin Amphitheatre', 'Zenjin Amphitheatre'], ['Zenjin Amphitheatre', 'Zenjin Amphitheatre', 'Zenjin Amphitheatre'], ['Sports Complex', 'Sports Complex', 'Sports Complex'], ['Skating Ring', 'Skating Ring', 'Skating Ring', 'Skating Ring'], ['Zenjin Amphitheatre'], ['Skating Ring', 'Skating Ring', 'Skating Ring', 'Skating Ring', 'Skating Ring', 'Skating Ring']];
+        let ts_13 = [['2:15pm', '11:00am', '2:30pm', '1:00pm'], ['11:00am', '12:45pm', '10:00am'], ['11:00am', '1:15pm', '10:00am', '12:00pm'], ['11:00am', '11:00 am', '3:00 pm', '10:00 am', '12:15pm'], ['1:45pm', '1:15pm'], ['11:00 am', '1:50pm', '1:50 pm'], ['11:00am', '10:15am'], ['11:45am', '3:15pm'], ['1:30pm', '12:45pm'], ['11:00 am', '11:00 am', '10:00 am', '12:30 pm'], ['2:15 pm'], ['11:30am', '1:30pm'], ['11:00am', '12:45pm', '10:00am', '12:15pm'], ['1:30pm', '12:00pm', '12:00pm'], ['12:15pm', '11:30am', '11:00am'], ['2:45pm'], ['11:00am', '1:00pm', '11:00am', '12:15pm', '10:00am', '12:00pm']];
+
+        let qs_14 = ['kabaddi', 'beach volleyball', 'kho-kho', 'chef\'s hat', 'bas ek minute', 'hum saath saath hai', 'hum kisise kam nahi', 'ishaaron isharon mein', 'family potrait', 'funtakashri', 'musical chair', 'bhaaago', 'tug of war'];
+        let gs_14 = [['N.A', 'N.A', 'N.A'], ['N.A', 'N.A', 'N.A'], ['N.A', 'N.A', 'N.A'], ['N.A', 'N.A'], ['N.A', 'N.A', 'N.A'], ['N.A', 'N.A', 'N.A'], ['N.A', 'N.A', 'N.A'], ['N.A', 'N.A', 'N.A', 'N.A'], ['N.A'], ['N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A'], ['N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A'], ['N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A'], ['N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A', 'N.A']];
+        let ds_14 = [[1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 2, 3], [2], [1, 1, 2, 2, 2, 3, 3], [1, 1, 1, 2, 2, 2, 3, 3, 3], [1, 1, 1, 2, 2, 2, 2, 3, 3, 3], [1, 1, 1, 2, 2, 2, 3, 3, 3]];
+        let vs_14 = [['near skating rink', 'near skating rink', 'near skating rink'], ['opp. skating rink', 'opp. skating rink', 'opp. skating rink'], ['opp. skating rink', 'opp. skating rink', 'opp. skating rink'], ['indoor sports complex', 'indoor sports complex'], ['front lawn', 'front lawn', 'front lawn'], ['main stage', 'main stage', 'main stage'], ['skating rink', 'skating rink', 'skating rink'], ['Badminton area', 'Badminton area', 'Badminton area', 'badminton area'], ['front lawn'], ['badminton area', 'badminton area', 'badminton area', 'badminton area', 'badminton area', 'badminton area', 'badminton area'], ['front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn'], ['front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn'], ['front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn', 'front lawn']];
+        let ts_14 = [['11:00 am', '11:00 am', '10:00 am'], ['11:00 am', '11:00 am', '10:00 am'], ['11:00 am', '11:00 am', '10:00 am'], ['12:30 pm', '1:00pm'], ['1:00 pm', '12:30 pm', '12:30 pm'], ['3:00 pm', '4:30 pm', '2:00 pm'], ['3:05 pm', '4:00 pm', '1:45 pm'], ['12:00 pm', '12:00 pm', '1:30pm', '12:00 pm'], ['12:00pm'], ['12:30 pm', '2:00pm', '11:30am', '3:00pm', '11:30am', '1:00pm'], ['12:00pm', '1:00pm', '2:00pm', '11:30am', '12:45pm', '2:15pm', '11:00am', '12:00pm', '1:15pm'], ['12:30pm', '1:30pm', '2:30pm', '12:00pm', '1:15pm', '2:45pm', '3:30pm', '10:30am', '12:30pm', '1:45pm'], ['12:15pm', '1:15pm', '2:15pm', '12:30pm', '1:45pm', '3:15pm', '11:30am', '1:00am', '2:00pm']];
+
+        // Merge arrays
+        qs1 = qs1.concat(qs_11, qs_12, qs_13, qs_14);
+        gs1 = gs1.concat(gs_11, gs_12, gs_13, gs_14);
+        ds1 = ds1.concat(ds_11, ds_12, ds_13, ds_14);
+        vs1 = vs1.concat(vs_11, vs_12, vs_13, vs_14);
+        ts1 = ts1.concat(ts_11, ts_12, ts_13, ts_14);
+
+        // Suggestion filter logic on input
+        queryInput.addEventListener('input', function() {
+            const inputVal = queryInput.value.toLowerCase();
+            suggestionsDiv.innerHTML = ''; 
+            suggestionsDiv.style.display = 'none';
+
+            if (inputVal) {
+                const filteredSuggestions = qs1.filter(event => event.toLowerCase().includes(inputVal));
+                if (filteredSuggestions.length > 0) {
+                    filteredSuggestions.forEach(suggestion => {
+                        const suggestionItem = document.createElement('li'); 
+                        suggestionItem.textContent = suggestion;
+                        
+                        suggestionItem.addEventListener('click', () => {
+                            queryInput.value = suggestion;
+                            suggestionsDiv.style.display = 'none';
+                        });
+                        
+                        suggestionsDiv.appendChild(suggestionItem); 
+                    });
+                    suggestionsDiv.style.display = 'block';
+                }
+            }
+        });
+
+        // Submit button functionality
+        document.getElementById('submit').addEventListener('click', function() {
+            let ques = queryInput.value.toLowerCase();
+            const index = qs1.findIndex(event => event.toLowerCase() === ques);
+
+            console.log("Query:", ques); // Debugging line
+            console.log("Index found:", index); // Debugging line
+            
+            if (index !== -1) {
+                resultsDiv.innerHTML = "";
+                for (let i = 0; i < gs1[index].length; i++) {
+                    const slotDiv = document.createElement('div');
+                    slotDiv.classList.add('slot');
+                    slotDiv.innerHTML = `
+                        <strong>Slot ${i + 1}:</strong> <br>
+                        Group: ${gs1[index][i]}<br>
+                        Day: ${ds1[index][i]}<br>
+                        Venue: ${vs1[index][i]}<br>
+                        Timing: ${ts1[index][i]}<br>
+                    `;
+                    resultsDiv.appendChild(slotDiv);
+                }
+            } else {
+                resultsDiv.innerHTML = "No details found for this event.";
+            }
+        });
+    </script>
+
+</body>
+</html>
