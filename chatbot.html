@@ -58,12 +58,26 @@
 }
 
 
+@keyframes fadeInSlide {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
         /* Styling for slot-wise results */
         .slot {
     background-color: rgba(255, 255, 255, 0.1);
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 5px;
+    opacity: 0; /* Initially hidden */
+    animation: fadeInSlide 1s ease-in-out forwards;
 }
 
         /* Styling for suggestions */
@@ -204,12 +218,10 @@ a#resetLink:hover {
                     filteredSuggestions.forEach(suggestion => {
                         const suggestionItem = document.createElement('li'); 
                         suggestionItem.textContent = suggestion;
-                        
                         suggestionItem.addEventListener('click', () => {
                             queryInput.value = suggestion;
                             suggestionsDiv.style.display = 'none';
                         });
-                        
                         suggestionsDiv.appendChild(suggestionItem); 
                     });
                     suggestionsDiv.style.display = 'block';
@@ -217,33 +229,34 @@ a#resetLink:hover {
             }
         });
 
-        // Submit button functionality
         document.getElementById('submit').addEventListener('click', function() {
-            let ques = queryInput.value.toLowerCase();
-            const index = qs1.findIndex(event => event.toLowerCase() === ques);
+    let ques = queryInput.value.toLowerCase();
+    const index = qs1.findIndex(event => event.toLowerCase() === ques);
 
-            console.log("Query:", ques); // Debugging line
-            console.log("Index found:", index); // Debugging line
-            
-            if (index !== -1) {
-                resultsDiv.innerHTML = "";
-                for (let i = 0; i < gs1[index].length; i++) {
-                    const slotDiv = document.createElement('div');
-                    slotDiv.classList.add('slot');
-                    slotDiv.innerHTML = `
-                        <strong>Slot ${i + 1}:</strong> <br>
-                        Group: ${gs1[index][i]}<br>
-                        Day: ${ds1[index][i]}<br>
-                        Venue: ${vs1[index][i]}<br>
-                        Timing: ${ts1[index][i]}<br>
-                    `;
-                    resultsDiv.appendChild(slotDiv);
-                }
-            } else {
-                resultsDiv.innerHTML = "No details found for this event.";
-            }
+    resultsDiv.innerHTML = ""; // Clear previous results
+
+    if (index !== -1) {
+        gs1[index].forEach((group, i) => {
+            // Create slot div
+            const slotDiv = document.createElement('div');
+            slotDiv.classList.add('slot');
+            slotDiv.innerHTML = `
+                <strong>Slot ${i + 1}:</strong><br>
+                Group: ${group}<br>
+                Day: ${ds1[index][i]}<br>
+                Venue: ${vs1[index][i]}<br>
+                Timing: ${ts1[index][i]}<br>
+            `;
+
+            // Add the slot div with animation delay
+            setTimeout(() => {
+                resultsDiv.appendChild(slotDiv);
+            }, i * 500); // 500ms delay for each subsequent slot
         });
+    } else {
+        resultsDiv.innerHTML = "No details found for this event.";
+    }
+});
     </script>
-
 </body>
 </html>
