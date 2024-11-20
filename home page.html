@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clubs Tamasha</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Header Section -->
-    <header>
+    <header id="navbar">
         <img src="utsav logo.png" alt="UTSAV Logo" class="logo">
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#chatbot">Chatbot</a>
+            <a href="#contact">Contact</a>
+            <a href="#how to use"></a>
+        </nav>
     </header>
     <!-- Introduction Section -->
     <section id="home" class="intro">
@@ -23,22 +30,64 @@
         <p>UTSAV brings together art, culture, and joy. Dive into a world of creativity and passion!</p>
     </section>
 
-    <!-- Contact and Chatbot Section -->
-    <section id="contact">
-        <h2>Contact Us</h2>
-        <p>Email: contact@utsav.com | Phone: +91-XXXX-XXXXXX</p>
-        
-        <!-- Chatbot Project Link -->
-        <div class="chatbot-link">
-            <h3>Explore Our Chatbot Project</h3>
-            <p>We've developed an interactive chatbot to enhance your experience. Click below to try it out!</p>
-            <a href="chatbot.html" class="chatbot-button">Go to Chatbot Project</a>
-        </div>
-    </section>
+    <!-- Chatbot Section -->
+<section id="chatbot">
+    <h2>Explore Our Chatbot Project</h2>
+    <p>We've developed an interactive chatbot to enhance your experience. Click below to try it out!</p>
+    <a href="chatbot.html" class="chatbot-button">Go to Chatbot Project</a>
+</section>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 UTSAV - Funkar, Kalakar. All Rights Reserved.</p>
-    </footer>
+<!-- Contact Section -->
+<section id="contact">
+    <h2>Contact Us</h2>
+     <p>Email: contact@utsav.com | Phone: +91-XXXX-XXXXXX</p>
+</section>
+
+<!-- Hidden How to Use Section -->
+<div id="how-to-use" class="how-to-use-overlay">
+    <div class="how-to-content">
+        <h2>How to Use</h2>
+        <p> </p>
+        <ul>
+            <li</li>
+            <li></li>
+            <li></li>
+        </ul>
+        <button id="close-how-to">&times;</button>
+    </div>
+</div>
+
+<!-- FAB -->
+<a href="#how-to-use" class="fab" id="how-to-fab">?</a>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 UTSAV - Funkar, Kalakar. All Rights Reserved.</p>
+</footer>
+    <!--JavaScipt Code-->
+    <script>
+        const fab = document.getElementById('how-to-fab');
+        const overlay = document.getElementById('how-to-use');
+        const closeButton = document.getElementById('close-how-to');
+        const body = document.body;
+    
+        fab.addEventListener('click', () => {
+            overlay.style.display = 'flex';
+            body.style.overflow = 'hidden'; 
+        });
+    
+        closeButton.addEventListener('click', () => {
+            overlay.style.display = 'none';
+            body.style.overflow = ''; 
+        });
+
+        overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) {
+        overlay.style.display = 'none';
+        body.style.overflow = '';
+    }
+});
+
+    </script>
 </body>
 </html>
