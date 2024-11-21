@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Clubs Tamasha</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
     <header id="navbar">
         <img src="utsav logo.png" alt="UTSAV Logo" class="logo">
         <nav>
-            <a href="#FAQ">FAQS</a>
+            <a href="#credits" onclick="showCredits()">Credits</a>
         </nav>
     </header>
     <!-- Introduction Section -->
@@ -34,20 +34,38 @@
     <a href="chatbot.html" class="chatbot-button">Go to Chatbot Project</a>
 </section>
 
-<!-- Hidden How to Use Section -->
+<!-- How Chatbot Works Section -->
 <div id="how-to-use" class="how-to-use-overlay">
     <div class="how-to-content">
-        <h2>How to Use</h2>
-        <p>To interact with our chatbot follow the given steps below:</p>
+        <h2>How Our Chatbot Works?</h2>
         <ul>
-            <li>Go to chatbot section</li>
-            <li>Click on "Go to Chatbot Project" Button</li>
-            <li>After that you will be redirected to the chatbot page</li>
-            <li>Enter a event and you will be getting information about it regarding slots, timings and more.</li>
+            <li>Events are suggested and filtered as a pereson searches them in the search bar.</li>
+            <li>Once event is submitted, details like slots, timings and more are displayed.</li>
+            <li>The chatbot does this by searching for the entered event in the database provided by the developers.</li>
+            <li>With the help of algorithms, our chatbot is able to convert the data into suitable format and display it.</li>
         </ul>
         <button id="close-how-to">&times;</button>
     </div>
 </div>
+
+<!-- Credits Section -->
+<section id="credits" class="credits-section">
+    <div class="moving-text">
+        <p>Team Head:</p><br>
+        <p>Deven Dhagolia</p>
+        <p>Class: IX Ganges</p><br><br><br>
+        <p>Front-end and Interface Development:</p><br>
+        <p>Sushant Aneja</p>
+        <p>Class: X Indus</p><br><br><br>
+        <p>Back-end Development:</p><br>
+        <p>Aniket Gupta</p>
+        <p>Class: IX Ganges</p><br><br><br>
+        <p>Data Management and Providing:</p><br>
+        <p>Aayan Gupta</p>
+        <p>Class: IX Ganges</p><br><br><br>
+        <p>Special Thanks to IT Deparment</p>
+    </div>
+</section>
 
 <!-- FAB -->
 <a href="#how-to-use" class="fab" id="how-to-fab">?</a>
@@ -80,6 +98,27 @@
     }
 });
 
+    const creditsSection = document.getElementById('credits');
+
+    function showCredits() {
+    const parent = creditsSection.parentNode;
+    const nextSibling = creditsSection.nextSibling;
+    creditsSection.classList.add('visible');
+    document.body.style.overflow = 'hidden'; // Disable scrolling
+    // Temporarily remove and re-add the creditsSection
+    parent.removeChild(creditsSection);
+    parent.insertBefore(creditsSection, nextSibling);
+}
+
+    function hideCredits(event) {
+        if (event.target === creditsSection) {
+            creditsSection.classList.remove('visible');
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
+    }
+
+    // Attach event listener to hide credits when clicking anywhere
+    creditsSection.addEventListener('click', hideCredits);
     </script>
 </body>
 </html>
