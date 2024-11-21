@@ -9,7 +9,7 @@
         /* Page styling */
         body {
     font-family: 'Roboto', sans-serif;
-    background-color: #282c34;
+    background-color: #1F396F;
     color: #ffffff;
     display: flex;
     flex-direction: column;
@@ -23,7 +23,7 @@
         
         h1 { 
             margin-bottom: 20px; 
-            color: #61dafb; 
+            color: wheat; 
         }
         
         input, button { 
@@ -39,7 +39,7 @@
         button { 
             padding: 10px 20px; 
             border-radius: 5px; 
-            background-color: #61dafb; 
+            background-color: wheat; 
             color: #282c34; 
         }
         
@@ -93,7 +93,7 @@
     width: 300px;
 
     scrollbar-width: thin; /* Firefox */
-    scrollbar-color: #61dafb transparent; /* Stylish colors for Firefox */
+    scrollbar-color: wheat transparent; /* Stylish colors for Firefox */
 }
 
 /* Custom scrollbar for Chrome, Edge, and Safari */
@@ -102,12 +102,12 @@
 }
 
 #suggestions::-webkit-scrollbar-thumb {
-    background: linear-gradient(90deg, #61dafb, #ffffff); /* Gradient thumb */
+    background: linear-gradient(90deg, wheat, #ffffff); /* Gradient thumb */
     border-radius: 10px; /* Rounded corners for the scrollbar thumb */
 }
 
 #suggestions::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(90deg, #ffffff, #61dafb); /* Hover effect */
+    background: linear-gradient(90deg, #ffffff, wheat); /* Hover effect */
 }
 
 #suggestions::-webkit-scrollbar-track {
@@ -121,14 +121,14 @@
         }
         
         #suggestions li:hover {
-            background-color: #61dafb;
+            background-color: wheat;
             color: #282c34;
         }
         a#resetLink {
     text-decoration: none;
     padding: 10px 20px;
     margin-top: 20px;
-    color: #61dafb;
+    color: wheat;
     border-radius: 5px;
     display: inline-block;
     font-size: 16px;
@@ -137,7 +137,7 @@
 
 /* Hover effect */
 a#resetLink:hover {
-    color: #61dafb;
+    color: wheat;
     font-size: 18px;
 }
     </style>
@@ -161,6 +161,12 @@ a#resetLink:hover {
     <!-- Results section -->
     <div id="results"></div>
 
+    <!--Dialog Box-->
+    <dialog id="resultsDialog">
+        <button id="closeDialog" style="float: right; padding: 5px;">✖</button>
+        <div id="dialogContent"></div>
+    </dialog>
+
     <script>
         // Element references
         const queryInput = document.getElementById('query');
@@ -168,15 +174,343 @@ a#resetLink:hover {
         const resultsDiv = document.getElementById('results');
 
         // Initialize arrays
-        let qs1 = ['groovy thumka', 'the cosmic funk showdown', 'one two ka four', 'step up, funkar! (indian)', 'step up, funkar! (western)', 'goonj', 'the one sur funkar!(indian)', 'the one sur funkar!(foreign)', 'teen ka tune', 'vibes and vibrations', 'dastak', "kuch 'mad-ads' ho jaaye", 'sirf ek bandaa!', 'call me, rangrez!', 'get…set...art', 'fashion panache', 'fine artists', 'sea of dreams', 'flow', 'rap-it-up', 'surs aur taals ', 'surs aur taals (finals)', 'war-words and rebuttals', 'innovate:design thinking hackathon', 'know thy india', 'buzz the brain', 'mind pop!', 'echoes', 'utsav flea market', 'the radio jockstar', 'khau gali', 'game on!', 'gully cricket clash', 'volley ball', 'punjabaazi', 'kal,aaj aur kal', 'fam-jam matakda', 'chic fiesta', 'crafting duo', 'bhaagam bhaag', 'reel in joy!', 'silent disco', 'nazara:kala-karhana exhibition'];
-        let gs1 = [['A and B', 'A and B', 'A and B'], ['A and B'], ['A', 'A', 'B', 'B'], ['A', 'A', 'A', 'A', 'B', 'B'], ['B', 'A'], ['A and B'], ['A', 'A', 'B'], ['B', 'A'], ['A and B'], ['A and B'], ['A and B', 'A and B'], ['A and B', 'A and B'], ['B', 'A', 'A'], ['A', 'A', 'A', 'B', 'B'], ['A', 'A', 'B'], ['B', 'A', 'A'], ['A and B', 'A and B', 'A and B', 'A and B'], ['A', 'A', 'B', 'B'], ['B', 'B', 'A', 'A'], ['B', 'A'], ['A and B', 'A and B', 'A and B', 'A and B', 'A and B', 'A and B'], ['A and B'], ['A and B'], ['A and B', 'A and B', 'A and B'], ['A and B'], ['A', 'A', 'B', 'B'], ['A and B', 'A and B'], ['B', 'B', 'A', 'A'], ['A and B', 'A and B', 'A and B'], ['A', 'B'], ['A and B', 'A and B', 'A and B', 'A and B', 'A and B'], ['A and B', 'A and B', 'A and B', 'A and B', 'A and B'], ['A and B', 'A and B', 'A and B'], ['A and B'], ['A and B', 'A and B', 'A and B'], ['N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.'], ['N.A.', 'N.A.'], ['N.A.', 'N.A.', 'N.A.'], ['N.A.', 'N.A.', 'N.A.', 'N.A.'], ['N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.'], ['N.A.', 'N.A.', 'N.A.'], ['N.A.', 'N.A.', 'N.A.'], ['N.A.', 'N.A.', 'N.A.']]
-        let ds1 = [[1, 2, 3], [2], [1, 2, 2, 3], [1, 2, 2, 3, 3, 3], [2, 3], [3], [1, 1, 2], [1, 2], [1], [3], [2, 3], [1, 2], [1, 2, 3], [1, 1, 2, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 2, 3], [1, 1, 2, 2], [1, 1, 2, 2], [2, 2], [1, 1, 1, 2, 2, 2], [3], [2], [1, 2, 3], [2], [1, 2, 2, 3], [1, 2], [1, 2, 3, 3], [1, 2, 3], [2, 3], [1, 2, 2, 3, 3], [1, 2, 2, 3, 3], [1, 2, 3], [1], [1, 2, 3], [1, 1, 2, 2, 3, 3], [1, 2], [1, 2, 3], [1, 2, 2, 3], [1, 1, 2, 2, 2, 2, 3, 3, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3]];
-        let vs1 = [['Front Lawn(Main Stage)', 'Front Lawn(Main Stage)', 'Front Lawn(Main Stage)'], ['Front Lawn(Main Stage)'], ['Front Lawn(Main Stage)', 'Front Lawn(Main Stage)', 'Front Lawn(Main Stage)', 'Front Lawn(Main Stage)'], ['Front Lawn(Main Stage)', 'Front Lawn(Main Stage)', 'Front Lawn(Main Stage)', 'Front Lawn(Main Stage)', 'Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)'], ['Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)'], ['Front Lawn(Main Stage)'], ['Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)'], ['Front Lawn(Main Stage)', 'Front Lawn(Main Stage)'], ['Front Lawn(Main Stage)'], ['Taare Zameen Par(Zenjin Amphetheatre)'], ['Front Lawn(Nukkad)', 'Front Lawn(Nukkad)'], ['Front Lawn(Main Stage)', 'Front Lawn(Main Stage)'], ['Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)'], ['Front Lawn(Nukkad)', 'Front Lawn(Nukkad)', 'Front Lawn(Nukkad)', 'Front Lawn(Nukkad)', 'Front Lawn(Nukkad)'], ['Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)'], ['Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)'], ['Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)'], ['Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)'], ['Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)'], ['Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)'], ['Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)'], ['Om Shanti Om (Assembly Area)'], ['Taare Zameen Par(Zenjin Amphetheatre)'], ['IT Lab', 'IT Lab', 'IT Lab'], ['Front Lawn(Main Stage)'], ['Shalimaar(left of assembly area)', 'Om Shanti Om (Assembly Area)', 'Shalimaar(left of assembly area)', 'Shalimaar(left of assembly area)'], ['Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)'], ['Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)'], ['Dil Chahta Hai(Sakiting Rink)', 'Dil Chahta Hai(Sakiting Rink)', 'Dil Chahta Hai(Sakiting Rink)'], ['Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)'], [' Indoor Sports Complex', ' Indoor Sports Complex', ' Indoor Sports Complex', ' Indoor Sports Complex', ' Indoor Sports Complex'], ['Dil Chahta Hai(Sakiting Rink)', 'Dil Chahta Hai(Sakiting Rink)', 'Dil Chahta Hai(Sakiting Rink)', 'Dil Chahta Hai(Sakiting Rink)', 'Dil Chahta Hai(Sakiting Rink)'], ['Funkar Khiladi(Playground near skating rink)', 'Funkar Khiladi(Playground near skating rink)', 'Funkar Khiladi(Playground near skating rink)'], ['Funkar Khiladi(Playground near skating rink)'], ['Front Lawn(Nukkad)', 'Front Lawn(Nukkad)', 'Front Lawn(Nukkad)'], ['Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)'], ['Taare Zameen Par(Zenjin Amphetheatre)', 'Taare Zameen Par(Zenjin Amphetheatre)'], ['Front Lawn(Nukkad)', 'Front Lawn(Nukkad)', 'Front Lawn(Nukkad)'], ['Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)'], ['Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)', 'Front Lawn ( Khuli Chhat :Stage right)'], ['Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)', 'Utsav Karwan (Stage left)'], ['Badminton Court', 'Badminton Court', 'Badminton Court'], ['Right side of Reception', 'Right side of Reception', 'Right side of Reception']];
-        let ts1 = [['2:35pm', '2:30pm', '1:30pm'], ['2:30pm'], ['3:00pm', '2:45pm', '11:20am', '10:20am'], ['12:40pm', '9:30am', '1:10pm', '12:15pm', '10:30am', '1:30pm'], ['12noon', '11:45am'], ['9:30am'], ['11:00am', '2:00pm', '9:30am'], ['1:30pm', '10:40am'], ['11:00am'], ['9:30am'], ['12:30pm', '10:00am'], ['2:35pm', '2:00pm'], ['12:30pm', '10:00am', '9:30am'], ['11:00am', '1:00pm', '9:30am', '11:45am', '9:30am'], ['11:00am', '9:30am', '9:30am'], ['12:45pm', '10:30am', '9:30am'], ['11:00am', '9:30am', '11:45am', '9:30am'], ['12:30pm', '1:45pm', '9:45am', '1:00pm'], ['12:15pm', '1:15pm', '9:30am', '12:30am'], ['10:15am', '2:50pm'], ['11:00am', '1:00pm', '2:30pm', '9:30am', '11:45am', '1:15pm'], ['11:20am'], ['1:00pm'], ['12:30pm'], ['10:30pm', '10:30pm'], ['12:10pm'], ['11:30am', '1:45pm', '9:30am', '12:30pm'], ['1:30pm', '12:15pm'], ['12:45pm', '11:00am', '10:00am', '1:30pm'], ['11:00am', '9:30am', '9:30am'], ['10:45am', '11:30am'], ['9:30am', '9:30am', '11:30am', '9:30am', '11:30am'], ['12:15pm', '9:45am', '12:15pm', '9:45am', '12noon'], ['1:45pm', '9:30am', '9:30am'], ['11:30am'], ['11:00am', '9:30am', '9:30am'], ['1:35pm', '2:50pm', '10:30am', '2:20pm', '11:10am', '1:00pm'], ['3:15pm', '2:00pm'], ['12:15pm', '11:00am', '10:45am'], ['12:45pm', '10:00am', '12:15pm', '10:30am'], ['12:30pm', '1:30pm', '10:00am', '11:15am', '12:15pm', '1:30pm', '10:30am', '11:45am', '1:00pm'], ['1:00pm', '12:45pm', '11:30am'], ['11:20am onwards', '9:30am onwards', '9:30am onwards'], ['10:00am onwards', '10:00am onwards', '10:00am onwards']];
+ let qs1=
+ ['groovy thumka',
+ 'the cosmic funk showdown',
+ 'one two ka four',
+ 'step up, funkar!(indian)',
+ 'step up, funkar!(western)',
+ 'goonj',
+ 'the one sur funkar!(indian)',
+ 'the one sur funkar!(foreign)',
+ 'teen ka tune',
+ 'vibes and vibrations',
+ 'dastak',
+ "kuch 'mad-ads' ho jaaye",
+ 'sirf ek bandaa!',
+ 'call me, rangrez!',
+ 'get…set...art',
+ 'fashion panache',
+ 'fine artists',
+ 'sea of dreams',
+ 'flow',
+ 'rap-it-up',
+ 'surs aur taals (prelims)',
+ 'surs aur taals (finals)',
+ 'war-words and rebuttals',
+ 'innovate:design thinking hackathon',
+ 'know thy india',
+ 'buzz the brain(prelims)',
+ 'buzz the brain(finals)',
+ 'mind pop!',
+ 'echoes',
+ 'utsav flea market',
+ 'the radio jockstar',
+ 'khau gali',
+ 'game on!',
+ 'gully cricket clash',
+ 'volley ball',
+ 'punjabaazi',
+ 'kal,aaj aur kal',
+ 'fam-jam matakda',
+ 'chic fiesta',
+ 'crafting duo',
+ 'bhaagam bhaag',
+ 'reel in joy!',
+ 'silent disco',
+ 'nazara:kala-karkhana exhibition',
+ 'final cut',
+ 'screening of online events'];
+
+
+
+
+let gs1 =
+[['A and B', 'A and B', 'A and B'],
+ ['A and B'],
+ ['A', 'A', 'B', 'B'],
+ ['A', 'A', 'A', 'A', 'B', 'B'],
+ ['B', 'A'],
+ ['A and B'],
+ ['A', 'A', 'B'],
+ ['B', 'A'],
+ ['A and B'],
+ ['A and B'],
+ ['A and B', 'A and B'],
+ ['A and B', 'A and B'],
+ ['B', 'A', 'A'],
+ ['A', 'A', 'A', 'B', 'B'],
+ ['A', 'A', 'B'],
+ ['B', 'A', 'A'],
+ ['A and B', 'A and B', 'A and B', 'A and B'],
+ ['A', 'A', 'B', 'B'],
+ ['B', 'B', 'A', 'A'],
+ ['B', 'A'],
+ ['A and B', 'A and B', 'A and B', 'A and B', 'A and B', 'A and B'],
+ ['A and B'],
+ ['A and B'],
+ ['A and B', 'A and B', 'A and B'],
+ ['A and B'],
+ ['A', 'B'],
+ ['A', 'B'],
+ ['A and B', 'A and B'],
+ ['B', 'B', 'A', 'A'],
+ ['A and B', 'A and B', 'A and B'],
+ ['A', 'B'],
+ ['A and B', 'A and B', 'A and B', 'A and B', 'A and B'],
+ ['A and B', 'A and B', 'A and B', 'A and B', 'A and B'],
+ ['A and B', 'A and B', 'A and B'],
+ ['A and B'],
+ ['A and B', 'A and B', 'A and B'],
+ ['N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.'],
+ ['N.A.', 'N.A.'],
+ ['N.A.', 'N.A.', 'N.A.'],
+ ['N.A.', 'N.A.', 'N.A.', 'N.A.'],
+ ['N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.'],
+ ['N.A.', 'N.A.', 'N.A.'],
+ ['N.A.', 'N.A.', 'N.A.'],
+ ['N.A.', 'N.A.', 'N.A.'],
+ ['N.A.', 'N.A.'],
+ ['N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.', 'N.A.','N.A.',]];
+
+
+
+
+ let ds1 = [[1, 2, 3],
+ [2],
+ [1, 2, 2, 3],
+ [1, 2, 2, 3, 3, 3],
+ [2, 3],
+ [3],
+ [1, 1, 2],
+ [1, 2],
+ [1],
+ [3],
+ [2, 3],
+ [1, 2],
+ [1, 2, 3],
+ [1, 1, 2, 2, 3],
+ [1, 2, 3],
+ [1, 2, 3],
+ [1, 2, 2, 3],
+ [1, 1, 2, 2],
+ [1, 1, 2, 2],
+ [2, 2],
+ [1, 1, 1, 2, 2, 2],
+ [3],
+ [2],
+ [1, 2, 3],
+ [2],
+ [1, 2],
+ [2, 3],
+ [1, 2],
+ [1, 2, 3, 3],
+ [1, 2, 3],
+ [2, 3],
+ [1, 2, 2, 3, 3],
+ [1, 2, 2, 3, 3],
+ [1, 2, 3],
+ [1],
+ [1, 2, 3],
+ [1, 1, 2, 2, 3, 3],
+ [1, 2],
+ [1, 2, 3],
+ [1, 2, 2, 3],
+ [1, 1, 2, 2, 2, 2, 3, 3, 3],
+ [1, 2, 3],
+ [1, 2, 3],
+ [1, 2, 3],
+ [1,2],
+ [1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3]];
+
+
+
+
+ let vs1 = [['Front Lawn(Main Stage)',
+  'Front Lawn(Main Stage)',
+  'Front Lawn(Main Stage)'],
+ ['Front Lawn(Main Stage)'],
+ ['Om Shanti Om (Assembly Area)',
+  'Om Shanti Om (Assembly Area)',
+  'Front Lawn(Main Stage)',
+  'Front Lawn(Main Stage)'],
+ ['Front Lawn(Main Stage)',
+  'Front Lawn(Main Stage)',
+  'Front Lawn(Main Stage)',
+  'Front Lawn(Main Stage)',
+  'Om Shanti Om (Assembly Area)',
+  'Om Shanti Om (Assembly Area)'],
+ ['Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)'],
+ ['Front Lawn(Main Stage)'],
+ ['Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)'],
+ ['Front Lawn(Main Stage)', 'Front Lawn(Main Stage)'],
+ ['Front Lawn(Main Stage)'],
+ ['Taare Zameen Par(Zenjin Amphetheatre)'],
+ ['Front Lawn(Nukkad)', 'Front Lawn(Nukkad)'],
+ ['Front Lawn(Main Stage)', 'Front Lawn(Main Stage)'],
+ ['Om Shanti Om (Assembly Area)',
+  'Om Shanti Om (Assembly Area)',
+  'Om Shanti Om (Assembly Area)'],
+ ['Front Lawn(Nukkad)',
+  'Front Lawn(Nukkad)',
+  'Front Lawn(Nukkad)',
+  'Front Lawn(Nukkad)',
+  'Front Lawn(Nukkad)'],
+ ['Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)'],
+ ['Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)'],
+ ['Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)'],
+ ['Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)'],
+ ['Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)'],
+ ['Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)'],
+ ['Om Shanti Om (Assembly Area)',
+  'Om Shanti Om (Assembly Area)',
+  'Om Shanti Om (Assembly Area)',
+  'Om Shanti Om (Assembly Area)',
+  'Om Shanti Om (Assembly Area)',
+  'Om Shanti Om (Assembly Area)'],
+ ['Om Shanti Om (Assembly Area)'],
+ ['Taare Zameen Par(Zenjin Amphetheatre)'],
+ ['IT Lab', 'IT Lab', 'IT Lab'],
+ ['Front Lawn(Main Stage)'],
+ ['Shalimaar(left of assembly area)', 'Shalimaar(left of assembly area)'],
+ ['Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)'],
+ ['Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)'],
+ ['Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)'],
+ ['Dil Chahta Hai(Skating Rink)',
+  'Dil Chahta Hai(Skating Rink)',
+  'Dil Chahta Hai(Skating Rink)'],
+ ['Om Shanti Om (Assembly Area)', 'Om Shanti Om (Assembly Area)'],
+ [' Indoor Sports Complex',
+  ' Indoor Sports Complex',
+  ' Indoor Sports Complex',
+  ' Indoor Sports Complex',
+  ' Indoor Sports Complex'],
+ ['Dil Chahta Hai(Skating Rink)',
+  'Dil Chahta Hai(Skating Rink)',
+  'Dil Chahta Hai(Skating Rink)',
+  'Dil Chahta Hai(Skating Rink)',
+  'Dil Chahta Hai(Skating Rink)'],
+ ['Funkar Khiladi(Playground near skating rink)',
+  'Funkar Khiladi(Playground near skating rink)',
+  'Funkar Khiladi(Playground near skating rink)'],
+ ['Funkar Khiladi(Playground near skating rink)'],
+ ['Front Lawn(Nukkad)', 'Front Lawn(Nukkad)', 'Front Lawn(Nukkad)'],
+ ['Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)'],
+ ['Taare Zameen Par(Zenjin Amphetheatre)',
+  'Taare Zameen Par(Zenjin Amphetheatre)'],
+ ['Front Lawn(Nukkad)', 'Front Lawn(Nukkad)', 'Front Lawn(Nukkad)'],
+ ['Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)'],
+ ['Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)',
+  'Front Lawn ( Khuli Chhat :Stage right)'],
+ ['Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)',
+  'Utsav Karwan (Stage left)'],
+ ['Badminton Court', 'Badminton Court', 'Badminton Court'],
+ ['Right side of Reception',
+  'Right side of Reception',
+  'Right side of Reception'],
+ ['Katha Sthal(Old Canteen)','Katha Sthal(Old Canteen)'],
+ ['Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)',
+  'Katha Sthal(Old Canteen)'
+]];
+
+
+
+
+ let ts1 = [['2:35pm', '2:30pm', '1:30pm'],
+ ['2:30pm'],
+ ['3:00pm', '2:45pm', '11:20am', '10:20am'],
+ ['12:40pm', '9:30am', '1:10pm', '12:15pm', '10:30am', '1:30pm'],
+ ['12noon', '11:45am'],
+ ['9:30am'],
+ ['11:00am', '2:00pm', '9:30am'],
+ ['1:30pm', '10:40am'],
+ ['11:00am'],
+ ['9:30am'],
+ ['12:30pm', '10:00am'],
+ ['2:35pm', '2:00pm'],
+ ['12:30pm', '10:00am', '9:30am'],
+ ['11:00am', '1:00pm', '9:30am', '11:45am', '9:30am'],
+ ['11:00am', '9:30am', '9:30am'],
+ ['12:45pm', '10:30am', '9:30am'],
+ ['11:00am', '9:30am', '11:45am', '9:30am'],
+ ['12:30pm', '1:45pm', '9:45am', '1:00pm'],
+ ['12:15pm', '1:15pm', '9:30am', '12:30am'],
+ ['10:15am', '2:50pm'],
+ ['11:00am', '1:00pm', '2:30pm', '9:30am', '11:45am', '1:15pm'],
+ ['11:20am'],
+ ['1:00pm'],
+ ['12:30pm', '10:30pm', '10:30pm'],
+ ['12:10pm'],
+ ['11:30am', '9:30am'],
+ ['1:45pm', '12:30pm'],
+ ['1:30pm', '12:15pm'],
+ ['12:45pm', '11:00am', '10:00am', '1:30pm'],
+ ['11:00am', '9:30am', '9:30am'],
+ ['10:45am', '11:30am'],
+ ['9:30am', '9:30am', '11:30am', '9:30am', '11:30am'],
+ ['12:15pm', '9:45am', '12:15pm', '9:45am', '12noon'],
+ ['1:45pm', '9:30am', '9:30am'],
+ ['11:30am'],
+ ['11:00am', '9:30am', '9:30am'],
+ ['1:35pm', '2:50pm', '10:30am', '2:20pm', '11:10am', '1:00pm'],
+ ['3:15pm', '2:00pm'],
+ ['12:15pm', '11:00am', '10:45am'],
+ ['12:45pm', '10:00am', '12:15pm', '10:30am'],
+ ['12:30pm', '1:30pm', '10:00am', '11:15am', '12:15pm', '1:30pm', '10:30am', '11:45am', '1:00pm'],
+ ['1:00pm', '12:45pm', '11:30am'],
+ ['11:20am onwards', '9:30am onwards', '9:30am onwards'],
+ ['10:00am onwards', '10:00am onwards', '10:00am onwards'],
+ ['2:00pm','1:30pm'],
+ ['11:00am','1:00am','2:00pm','9:45am','11:00am','12:15pm','1:30pm','9:45am','11:00am','12:15pm','1:30pm']];
         
 
-        // Suggestion filter logic on input
-        queryInput.addEventListener('input', function() {
+ // Suggestion filter logic on input
+ queryInput.addEventListener('input', function() {
             const inputVal = queryInput.value.toLowerCase();
             suggestionsDiv.innerHTML = ''; 
             suggestionsDiv.style.display = 'none';
@@ -198,29 +532,64 @@ a#resetLink:hover {
             }
         });
 
-        document.getElementById('submit').addEventListener('click', function() {
+        document.getElementById('submit').addEventListener('click', function () {
     let ques = queryInput.value.toLowerCase();
     const index = qs1.findIndex(event => event.toLowerCase() === ques);
 
     resultsDiv.innerHTML = ""; // Clear previous results
 
     if (index !== -1) {
-        gs1[index].forEach((group, i) => {
-            // Create slot div
-            const slotDiv = document.createElement('div');
-            slotDiv.classList.add('slot');
-            slotDiv.innerHTML = `
-                <strong>Slot ${i + 1}:</strong><br>
-                Group: ${group}<br>
-                Day: ${ds1[index][i]}<br>
-                Venue: ${vs1[index][i]}<br>
-                Timing: ${ts1[index][i]}<br>
-            `;
+        // Create a map to group slots by groups
+        let groupMap = {};
 
-            // Add the slot div with animation delay
+        gs1[index].forEach((group, i) => {
+            if (!groupMap[group]) {
+                groupMap[group] = []; // Initialize the group if not present
+            }
+            // Push the slot details into the corresponding group
+            groupMap[group].push({
+                day: ds1[index][i],
+                venue: vs1[index][i],
+                timing: ts1[index][i],
+            });
+        });
+
+        // Initialize cumulative animation delay
+        let animationDelay = 0;
+
+        // Iterate over each group and display its header and slots
+        Object.entries(groupMap).forEach(([group, slots], groupIndex) => {
+            // Add group header with a delay
             setTimeout(() => {
-                resultsDiv.appendChild(slotDiv);
-            }, i * 500); // 500ms delay for each subsequent slot
+                const groupDiv = document.createElement('div');
+                groupDiv.classList.add('group');
+                groupDiv.innerHTML = `<h3>Group: ${group}</h3>`;
+                resultsDiv.appendChild(groupDiv);
+
+                // Auto-scroll to the latest content
+                groupDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+                // Add slots within the group with individual animation
+                slots.forEach((slot, slotIndex) => {
+                    setTimeout(() => {
+                        const slotDiv = document.createElement('div');
+                        slotDiv.classList.add('slot');
+                        slotDiv.innerHTML = `
+                            <strong>Slot ${slotIndex + 1}:</strong><br>
+                            Day: ${slot.day}<br>
+                            Venue: ${slot.venue}<br>
+                            Timing: ${slot.timing}<br>
+                        `;
+                        groupDiv.appendChild(slotDiv);
+
+                        // Auto-scroll to the latest content
+                        slotDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }, slotIndex * 500); // Delay between slots
+                });
+            }, animationDelay);
+
+            // Increment delay for the next group (group header + slots animation time)
+            animationDelay += 500 * (slots.length + 1); // +1 for group header
         });
     } else {
         resultsDiv.innerHTML = "No details found for this event.";
